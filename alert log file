@@ -1,0 +1,12 @@
+to check all the instance
+cat /etc/oratab
+export ORACLE_HOME='instance path'
+export ORACLE_SID=instance_name;
+cd /$ORACLE_HOME/bin
+connected to database
+./sqlplus / as sysdba
+select name,value from v$diag_info where name='Diag trance'
+we will get the path got to new terminal change the directory to trace 
+ls-lrt alert*
+will get the alert log file and then tail it by using the command:
+tail -f alertprodb.log 
