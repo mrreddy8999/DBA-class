@@ -1,0 +1,44 @@
+// TO check the parameter in sql mode
+show parameter parameter name;
+
+// it shows the value which we need to changed to check the reflection or change for paremeter open_cursors.
+show parameter open_cursors;   //output integer value is "300"
+
+To check SP&P file we need to chnage the directory to dbs from oracle_home and then command : ls- lrt
+initproddb.ora---P file
+spfileproddb.ora--sp file
+
+ALTER SYSTEM SET OPEN_CURSORS=500 SCOPE=SPFILE;
+after altered check the parameter using 5 th line. //output will be the same "300".
+we cannot see any change reflection in the memory as scope =sp file to see the change 
+shutdown immediate;
+startup;
+show parameter OPEN_CURSORS;
+//output integer value will be "500".
+
+ALTER SYSTEM SET OPEN_CURSORS=700 SCOPE=memory;
+after altered check the parameter using 5 th line. //output will be the same "500".
+we can see the change reflection in the memory as scope ="memory" 
+shutdown immediate;
+startup;
+show parameter OPEN_CURSORS;
+//output integer value will be "300".
+beacause when ever we shutdowm the instance will disconnect with database and started with new instance.
+
+ALTER SYSTEM SET OPEN_CURSORS=700 SCOPE=both;
+after altered check the parameter using 5 th line. //output will be the same "700".
+we can see any change reflection in the memory as scope =both to see the change in system
+shutdown immediate;
+startup;
+show parameter OPEN_CURSORS;
+//output integer value will be "700".
+
+we can create sp file using p file.
+create spfile from pfile;
+create pfile from spfile;
+we lost both we can create using memory
+create spfile from memory;
+
+
+
+
