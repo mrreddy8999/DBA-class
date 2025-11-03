@@ -1,7 +1,7 @@
 #know all the instances in the server.
 cat /etc/oratab
 
-TO coonect to database
+TO connect to database
 export ORACLE_HOME=/u01/app/oracle/product/19.0.0.0/dbhome_1
 export ORACLE_SID=proddb
 cd $ORACLE_HOME
