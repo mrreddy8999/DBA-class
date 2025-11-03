@@ -1,0 +1,24 @@
+#know all the instances in the server.
+cat /etc/oratab
+
+TO coonect to database
+export ORACLE_HOME=/u01/app/oracle/product/19.0.0.0/dbhome_1
+export ORACLE_SID=proddb
+cd $ORACLE_HOME
+cd bin
+pwd
+
+./sqlplus / as sysdba
+
+
+select name,value from v$diag_info where name = 'Diag Trace';
+here v$daig_info is the view  and name of the alert log file is diag trace and output of value is alert log file destination.
+
+
+In the new window:
+new terminal(make sure this is always first) 
+cd /u01/app/oracle/diag/rdbms/proddb/proddb/trace
+
+we are gpoing to trace directory
+ls -lrt alert*
+tail -f alert_proddb.log
