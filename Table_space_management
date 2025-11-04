@@ -1,0 +1,109 @@
+dba_tablespaces---one of the view to check the tablespace available
+// tablespace_name:
+sysaux 
+system
+temp
+undo
+users.
+
+SET LINESIZE 200
+
+SELECT tablespace_name,
+       block_size,
+       extent_management,
+       segment_space_management,
+       status
+FROM   dba_tablespaces
+ORDER BY tablespace_name;
+
+
+To check all the datafile of a tablespace;
+-----view to check the datafile of tablespace
+**dba_data_file**
+
+COLUMN file_name FORMAT A70;
+SELECT tablespace_name,
+		file_id,
+       file_name,
+       ROUND(bytes/1024/1024) AS size_mb,
+       ROUND(maxbytes/1024/1024) AS max_size_mb,
+       autoextensible,
+       increment_by,
+       status
+FROM   dba_data_files
+--WHERE  tablespace_name = 'USERS'
+ORDER BY file_id;
+
+------specifies the default location for Oracle Managed Files (OMF).
+show parameter DB_CREATE_FILE_DEST;
+
+---------------------cretaed a table space manu tablepace is located according to db_create_file_dest
+create tablespace manu;
+
+
+-------- to check the sizes and all fields
+set pages 999
+set lines 400
+SELECT df.tablespace_name tablespace_name,
+ max(df.autoextensible) auto_ext,
+ round(df.maxbytes / (1024 * 1024), 2) max_ts_size,
+ round((df.bytes - sum(fs.bytes)) / (df.maxbytes) * 100, 2) max_ts_pct_used,
+ round(df.bytes / (1024 * 1024), 2) curr_ts_size,
+ round((df.bytes - sum(fs.bytes)) / (1024 * 1024), 2) used_ts_size,
+ round((df.bytes-sum(fs.bytes)) * 100 / df.bytes, 2) ts_pct_used,
+ round(sum(fs.bytes) / (1024 * 1024), 2) free_ts_size,
+ nvl(round(sum(fs.bytes) * 100 / df.bytes), 2) ts_pct_free
+FROM dba_free_space fs,
+ (select tablespace_name,
+ sum(bytes) bytes,
+ sum(decode(maxbytes, 0, bytes, maxbytes)) maxbytes,
+ max(autoextensible) autoextensible
+ from dba_data_files
+ group by tablespace_name) df
+WHERE fs.tablespace_name (+) = df.tablespace_name
+GROUP BY df.tablespace_name, df.bytes, df.maxbytes
+UNION ALL
+SELECT df.tablespace_name tablespace_name,
+ max(df.autoextensible) auto_ext,
+ round(df.maxbytes / (1024 * 1024), 2) max_ts_size,
+ round((df.bytes - sum(fs.bytes)) / (df.maxbytes) * 100, 2) max_ts_pct_used,
+ round(df.bytes / (1024 * 1024), 2) curr_ts_size,
+ round((df.bytes - sum(fs.bytes)) / (1024 * 1024), 2) used_ts_size,
+ round((df.bytes-sum(fs.bytes)) * 100 / df.bytes, 2) ts_pct_used,
+ round(sum(fs.bytes) / (1024 * 1024), 2) free_ts_size,
+ nvl(round(sum(fs.bytes) * 100 / df.bytes), 2) ts_pct_free
+FROM (select tablespace_name, bytes_used bytes
+ from V$temp_space_header
+ group by tablespace_name, bytes_free, bytes_used) fs,
+ (select tablespace_name,
+ sum(bytes) bytes,
+ sum(decode(maxbytes, 0, bytes, maxbytes)) maxbytes,
+ max(autoextensible) autoextensible
+ from dba_temp_files
+ group by tablespace_name) df
+WHERE fs.tablespace_name (+) = df.tablespace_name
+GROUP BY df.tablespace_name, df.bytes, df.maxbytes
+ORDER BY 4 DESC;
+
+
+
+--------Creating the table space with a datafile:
+create tablespace table_name(MANU) datafile '/database/PRODDB/datafile/manu0_001.dbf' size 5M autoextended on;
+Create tablespace HRMS_TS datafile '/database/PRODDB/datafile/HRMS_001.dbf' size 5M autoextend on;
+
+-----------adding a datafile to existing tablespace:
+alter tablespace manu add datafile '/database/PRODDB/datafile/manu0_002.dbf' size 5M autoextended on;
+
+-------------to remove the datafile from table space:
+alter tablespace manu drop datafile '/database/PRODDB/datafile/manu0_002.dbf' size 5M autoextended on;
+
+----------to remove tablespace;
+drop tablespace MANu;
+
+-------if we only one data date we cannot drop it directly ,to remove datafile we need drop the tabel and existing dbf file:
+drop tablespace MANU including contents and datafiles;
+
+
+
+
+
