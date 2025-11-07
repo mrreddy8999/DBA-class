@@ -1,0 +1,40 @@
+configuring ip
+using ifconfig 
+we can maintain permanent ip address by giving manual in the host application-settings-netwok-ip4
+changing hostname by
+hostnamectl set-hostname server1
+bash
+taking remote session using ssh. 
+ssh oracle@192.168.1.200-----changing to server 2 from server1
+ssh oracle@192.168.1.100-----changing to server 1 from server2
+
+we can keep host name without using ip address everytime
+vi /etc/hosts
+192.168.1.100 server1.com server1 srv1
+192.168.1.200 server2.com server2 srv2
+
+esc
+:x
+
+then we can directly connect to other server ssh oracle@server1
+it will ask for pswd -oracle then we are moved to other server
+to overcome this not give pswd;
+cd 
+cd .ssh
+ls -lrt
+ssh-keygen
+ls -lrt
+ssh-copy-id oracle@server2
+pswd-oracle
+now we can connect directly without pswd from server1 to server2 
+
+
+
+
+to copy a file from one server to other server:
+
+
+We have created the file in database as file using cat > file1 this first file
+to copy this into server 2 we have 
+scp file1 oracle@server2:/u01/file1
+
