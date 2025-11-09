@@ -1,0 +1,20 @@
+Netwroking files are stored in cd /$ORACLE_HOME/network/admin
+  in the bin we can create the listner using command:netmgr(UTILITY)
+
+expand on local
+expand on listeners
+click + symbol which is in green color.
+
+enter name of listener
+listener
+click on OK 
+click on add address
+in the host you can give hostname or ipaddress.
+
+in the drop down above switch it from listening locations to database services.
+click on add database.
+
+Global db name : proddb
+SID : proddb
+file save network configuration
+file exit.
